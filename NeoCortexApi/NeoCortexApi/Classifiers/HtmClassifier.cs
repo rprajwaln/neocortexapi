@@ -166,7 +166,7 @@ namespace NeoCortexApi.Classifiers
 
             }
             
-            Debug.WriteLine("Top  predictions are:");
+            Debug.WriteLine("Top 3 predictions are:");
             Debug.WriteLine(string.Join(Environment.NewLine,predictedList.OrderByDescending(z => z.Key).ToList().Select(x => x.Value).Take(howMany)));
 
             Debug.WriteLine("Top three similarities are:");
