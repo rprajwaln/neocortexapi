@@ -174,10 +174,10 @@ namespace NeoCortexApi.Classifiers
             }
 
             int cnt = 0;
-            foreach (var keyPair in list2)
+            foreach (var keyPair in list2.Values.OrderByDescending(key => key.Similarity))
             {
-                res.Add(keyPair.Value);
-                if (++cnt > howMany)
+                res.Add(keyPair);
+                if (++cnt >= howMany)
                     break;
             }
 
