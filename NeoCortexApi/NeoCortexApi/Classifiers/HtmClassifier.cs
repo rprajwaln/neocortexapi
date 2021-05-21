@@ -119,11 +119,9 @@ namespace NeoCortexApi.Classifiers
         public List<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany)
         {
             List<ClassifierResult> res = new List<ClassifierResult>();
-
             double maxSameBits = 0;
             TIN predictedValue = default;
-            //var list = new List<KeyValuePair<double, string>>();
-            Dictionary<TIN, ClassifierResult> list2 = new Dictionary<TIN, ClassifierResult>();
+            Dictionary<TIN, ClassifierResult> dict = new Dictionary<TIN, ClassifierResult>();
 
             var predictedList = new List<KeyValuePair<double, string>>();
             if (predictiveCells.Length != 0)
@@ -154,11 +152,9 @@ namespace NeoCortexApi.Classifiers
                         //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(celIndicies).Count()) / (double)pair.Value.Length));// ;
                         var numOfSameBitsPct = pair.Value.Intersect(celIndicies).Count();
                         double simPercentage = Math.Round(MathHelpers.CalcArraySimilarity(pair.Value, celIndicies), 2);
-                        //list.Add(new KeyValuePair<double, string>(simPercentage, $">indx:{n} \tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}"));
-                        list2.Add(pair.Key, new ClassifierResult { PredictedInput = pair.Key, NumOfSameBits = numOfSameBitsPct, Similarity = simPercentage });
-
+                        dict.Add(pair.Key, new ClassifierResult { PredictedInput = pair.Key, NumOfSameBits = numOfSameBitsPct, Similarity = simPercentage });
                         predictedList.Add(new KeyValuePair<double, string>(simPercentage, pair.Key.ToString()));
-                        //list.Add(new KeyValuePair<double, string>(simPercentage, $">indx:{n} \tinp/len: {pair.Key}/{pair.Value.Length} similarity {simPercentage}\t {Helpers.StringifyVector(pair.Value)}"));
+                        
                         if (numOfSameBitsPct > maxSameBits)
                         {
                             Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage} \t {Helpers.StringifyVector(pair.Value)}");
@@ -174,7 +170,7 @@ namespace NeoCortexApi.Classifiers
             }
 
             int cnt = 0;
-            foreach (var keyPair in list2.Values.OrderByDescending(key => key.Similarity))
+            foreach (var keyPair in dict.Values.OrderByDescending(key => key.Similarity))
             {
                 res.Add(keyPair);
                 if (++cnt >= howMany)

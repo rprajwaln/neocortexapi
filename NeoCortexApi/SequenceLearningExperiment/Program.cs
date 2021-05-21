@@ -214,8 +214,7 @@ namespace SequenceLearningExperiment
             List<string> previousInputs = new List<string>();
             previousInputs.Add("-1.0");
             
-
-            //
+            
             // Now training with SP+TM. SP is pretrained on the given input pattern.
             for (int i = 0; i < maxCycles; i++)
             {
@@ -260,33 +259,22 @@ namespace SequenceLearningExperiment
 
                     if (lyrOut.PredictiveCells.Count > 0)
                     {
-                        //var newRes = cls.GetPredictedInputValues(lyrOut.PredictiveCells.ToArray(), 3);
+                        //var predictedInputValue = cls.GetPredictedInputValue(lyrOut.PredictiveCells.ToArray());
                         var predictedInputValue = cls.GetPredictedInputValues(lyrOut.PredictiveCells.ToArray(), 3);
+                        
                         Debug.WriteLine($"Current Input: {input}");
+                        Debug.WriteLine("Top three predictions sorted by similarity:");
                         foreach (var t in predictedInputValue)
                         {
-                            
-                            Debug.WriteLine($"Predicted Input: {string.Join(", ",t.PredictedInput)}, Similarity Percentage: {string.Join(", ",t.Similarity)}, Number of Same Bits: {string.Join(", ",t.NumOfSameBits)}");
-                            //Debug.WriteLine(t.Similarity.ToString(),t.NumOfSameBits,t.PredictedInput);
+                            Debug.WriteLine($"Predicted Input: {string.Join(", ",t.PredictedInput)},\tSimilarity Percentage: {string.Join(", ",t.Similarity)}, \tNumber of Same Bits: {string.Join(", ",t.NumOfSameBits)}");
                         }
-                        //var predictedInputValue = cls.GetPredictedInputValue(lyrOut.PredictiveCells.ToArray());
-                        // TODO...
-                        //Debug.WriteLine($"Current Input: {input} \t| Predicted Input: {predictedInputValue}");
-
-                        // TODO. Better formatting
-                        //Debug.WriteLine("Top three similarities are:");
-                        //Debug.WriteLine(string.Join(Environment.NewLine, list.OrderByDescending(z => z.Key).ToList().Take(howMany)));
-
-
-                        lastPredictedValue = predictedInputValue.First().PredictedInput; //TODO..
+                        lastPredictedValue = predictedInputValue.First().PredictedInput;
                     }
                     else
                     {
                         Debug.WriteLine($"NO CELLS PREDICTED for next cycle.");
                         lastPredictedValue = String.Empty;
                     }
-                    
-
                 }
 
                 // The brain does not do that this way, so we don't use it.
