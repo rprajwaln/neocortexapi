@@ -106,22 +106,25 @@ namespace NeoCortexApi.Classifiers
         public class ClassifierResult
         {
             public TIN PredictedInput { get; set; }
-            
+
             /// <summary>
             /// Number of identical non-zero bits in the SDR.
             /// </summary>
             public int NumOfSameBits { get; set; }
 
-            public float Similarity { get; set; }
+            public double Similarity { get; set; }
         }
 
 
-        public TIN GetPredictedInputValues(Cell[] predictiveCells, short howMany)
+        public List<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany)
         {
-            // bool x = false;
+            List<ClassifierResult> res = new List<ClassifierResult>();
+
             double maxSameBits = 0;
             TIN predictedValue = default;
-            var list = new List<KeyValuePair<double, string>>();
+            //var list = new List<KeyValuePair<double, string>>();
+            Dictionary<TIN, ClassifierResult> list2 = new Dictionary<TIN, ClassifierResult>();
+
             var predictedList = new List<KeyValuePair<double, string>>();
             if (predictiveCells.Length != 0)
             {
@@ -141,50 +144,54 @@ namespace NeoCortexApi.Classifiers
                     {
                         Debug.WriteLine(
                             $">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
-                        return pair.Key;
-                    }
 
-                    // Tried following:
-                    //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(arr).Count()) / Math.Max(arr.Length, pair.Value.Count())));
-                    //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(celIndicies).Count()) / (double)pair.Value.Length));// ;
-                    var numOfSameBitsPct = pair.Value.Intersect(celIndicies).Count();
-                    double simPercentage = Math.Round(MathHelpers.CalcArraySimilarity(pair.Value,celIndicies),2);
-                    list.Add(new KeyValuePair<double, string>(simPercentage, $">indx:{n} \tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}"));
-                    predictedList.Add(new KeyValuePair<double, string>(simPercentage, pair.Key.ToString()));
-                    //list.Add(new KeyValuePair<double, string>(simPercentage, $">indx:{n} \tinp/len: {pair.Key}/{pair.Value.Length} similarity {simPercentage}\t {Helpers.StringifyVector(pair.Value)}"));
-                    if (numOfSameBitsPct > maxSameBits)
-                    {
-                        Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage} \t {Helpers.StringifyVector(pair.Value)}");
-                        maxSameBits = numOfSameBitsPct;
-                        predictedValue = pair.Key;
-                        indxOfMatchingInp = n;
+                        res.Add(new ClassifierResult { PredictedInput = pair.Key, Similarity = (float)1.0, NumOfSameBits = pair.Value.Length});
                     }
                     else
-                        Debug.WriteLine($"<indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}");
-                        n++;
+                    {
+                        // Tried following:
+                        //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(arr).Count()) / Math.Max(arr.Length, pair.Value.Count())));
+                        //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(celIndicies).Count()) / (double)pair.Value.Length));// ;
+                        var numOfSameBitsPct = pair.Value.Intersect(celIndicies).Count();
+                        double simPercentage = Math.Round(MathHelpers.CalcArraySimilarity(pair.Value, celIndicies), 2);
+                        //list.Add(new KeyValuePair<double, string>(simPercentage, $">indx:{n} \tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}"));
+                        list2.Add(pair.Key, new ClassifierResult { PredictedInput = pair.Key, NumOfSameBits = numOfSameBitsPct, Similarity = simPercentage });
+
+                        predictedList.Add(new KeyValuePair<double, string>(simPercentage, pair.Key.ToString()));
+                        //list.Add(new KeyValuePair<double, string>(simPercentage, $">indx:{n} \tinp/len: {pair.Key}/{pair.Value.Length} similarity {simPercentage}\t {Helpers.StringifyVector(pair.Value)}"));
+                        if (numOfSameBitsPct > maxSameBits)
+                        {
+                            Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage} \t {Helpers.StringifyVector(pair.Value)}");
+                            maxSameBits = numOfSameBitsPct;
+                            predictedValue = pair.Key;
+                            indxOfMatchingInp = n;
+                        }
+                        else
+                            Debug.WriteLine($"<indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}");
+                    }
+                    n++;
                 }
-
             }
-            
-            Debug.WriteLine("Top 3 predictions are:");
-            Debug.WriteLine(string.Join(Environment.NewLine,predictedList.OrderByDescending(z => z.Key).ToList().Select(x => x.Value).Take(howMany)));
 
-            Debug.WriteLine("Top three similarities are:");
-            Debug.WriteLine(string.Join(Environment.NewLine,list.OrderByDescending(z => z.Key).ToList().Take(howMany)));
-            return predictedValue;
+            int cnt = 0;
+            foreach (var keyPair in list2)
+            {
+                res.Add(keyPair.Value);
+                if (++cnt > howMany)
+                    break;
+            }
+
+            return res;
         }
 
 
-        //public ICollection<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells)
-        //{
-        //   return new List<ClassifierResult>() { new ClassifierResult { PredictedInput = default(TIN), Similarity = 0.0F } };
-        //}
 
         /// <summary>
         /// Gets predicted value for next cycle
         /// </summary>
         /// <param name="predictiveCells">The list of predictive cells.</param>
         /// <returns></returns>
+        [Obsolete("This method will be removed in the future. Use GetPredictedInputValues instead. ")]
         public TIN GetPredictedInputValue(Cell[] predictiveCells)
         {
             // bool x = false;
@@ -411,7 +418,7 @@ namespace NeoCortexApi.Classifiers
             byte[] arr = new byte[output.Length];
             for (int i = 0; i < output.Length; i++)
             {
-                arr[i] = (byte) output[i].Index;
+                arr[i] = (byte)output[i].Index;
             }
             return arr;
         }
@@ -436,4 +443,3 @@ namespace NeoCortexApi.Classifiers
 
     }
 }
-    

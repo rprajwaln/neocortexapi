@@ -2,13 +2,13 @@
 using NeoCortexApi.DistributedComputeLib;
 using NeoCortexApi.Encoders;
 using NeoCortexApi.Entities;
-using NeoCortexApi.Network;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using NeoCortexApi.Classifiers;
+using NeoCortexApi.Network;
 
 namespace SequenceLearningExperiment
 {
@@ -114,7 +114,7 @@ namespace SequenceLearningExperiment
             //List<double> inputValues = new List<double>(new double[] { 0.0, 1.0, 0.0, 2.0, 3.0, 4.0, 5.0, 6.0, 5.0, 4.0, 3.0, 7.0, 1.0, 9.0, 12.0, 11.0, 12.0, 13.0, 14.0, 15.0, 17.0, 11.00, 12.00, 17.00 });
 
             // C-0, D-1, E-2, F-3, G-4, H-5
-            // https://www.bethsnotesplus.com/2013/08/twinkle-twinkle-little-star.html
+            // http://sea-01.cit.frankfurt-university.de:32224/?dmVyPTEuMDAxJiYwYzg1N2MyNmFmMzIyMjc0OD02MDlGQkRBOF83Njg0Nl8xNTU0N18xJiZmYjFlMzlhNWZmYWYyNDE9MTIzMyYmdXJsPWh0dHBzJTNBJTJGJTJGd3d3JTJFYmV0aHNub3Rlc3BsdXMlMkVjb20lMkYyMDEzJTJGMDglMkZ0d2lua2xlLXR3aW5rbGUtbGl0dGxlLXN0YXIlMkVodG1sJTBE
             //var inputValues = new List<double>( new double[] { 0.0, 0.0, 4.0, 4.0, 5.0, 5.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0, 0.0 });
 
             // All elements same.
@@ -213,6 +213,7 @@ namespace SequenceLearningExperiment
             int maxPrevInputs = inputValues.Count - 1;
             List<string> previousInputs = new List<string>();
             previousInputs.Add("-1.0");
+            
 
             //
             // Now training with SP+TM. SP is pretrained on the given input pattern.
@@ -259,18 +260,32 @@ namespace SequenceLearningExperiment
 
                     if (lyrOut.PredictiveCells.Count > 0)
                     {
+                        //var newRes = cls.GetPredictedInputValues(lyrOut.PredictiveCells.ToArray(), 3);
                         var predictedInputValue = cls.GetPredictedInputValues(lyrOut.PredictiveCells.ToArray(), 3);
+                        Debug.WriteLine($"Current Input: {input}");
+                        foreach (var t in predictedInputValue)
+                        {
+                            
+                            Debug.WriteLine($"Predicted Input: {string.Join(", ",t.PredictedInput)}, Similarity Percentage: {string.Join(", ",t.Similarity)}, Number of Same Bits: {string.Join(", ",t.NumOfSameBits)}");
+                            //Debug.WriteLine(t.Similarity.ToString(),t.NumOfSameBits,t.PredictedInput);
+                        }
                         //var predictedInputValue = cls.GetPredictedInputValue(lyrOut.PredictiveCells.ToArray());
+                        // TODO...
+                        //Debug.WriteLine($"Current Input: {input} \t| Predicted Input: {predictedInputValue}");
 
-                        Debug.WriteLine($"Current Input: {input} \t| Predicted Input: {predictedInputValue}");
+                        // TODO. Better formatting
+                        //Debug.WriteLine("Top three similarities are:");
+                        //Debug.WriteLine(string.Join(Environment.NewLine, list.OrderByDescending(z => z.Key).ToList().Take(howMany)));
 
-                        lastPredictedValue = predictedInputValue;
+
+                        lastPredictedValue = predictedInputValue.First().PredictedInput; //TODO..
                     }
                     else
                     {
                         Debug.WriteLine($"NO CELLS PREDICTED for next cycle.");
                         lastPredictedValue = String.Empty;
                     }
+                    
 
                 }
 
