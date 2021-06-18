@@ -140,7 +140,7 @@ namespace NeoCortexApi.Classifiers
                     if (pair.Value.SequenceEqual(celIndicies))
                     {
                         Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
-                        res.Add(new ClassifierResult { PredictedInput = pair.Key, Similarity = (float)1.0, NumOfSameBits = pair.Value.Length});
+                        res.Add(new ClassifierResult { PredictedInput = pair.Key, Similarity = (float)100.0, NumOfSameBits = pair.Value.Length});
                     }
                     else
                     {
@@ -169,8 +169,8 @@ namespace NeoCortexApi.Classifiers
             foreach (var keyPair in dict.Values.OrderByDescending(key => key.Similarity))
             {
                 res.Add(keyPair);
-                if (++cnt >= howMany)
-                    break;
+                    if (++cnt >= howMany)
+                        break;
             }
 
             return res;
