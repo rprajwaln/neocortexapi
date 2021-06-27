@@ -94,22 +94,6 @@ The current implementation of the classifier peeks the first best matching one, 
 We have improved the classifier to be able to detect more complex sequence.
 The classifier tracks the list of inputs during the learning process.
 
-Consider the following situation noted in the sample above. The classifier enters with the following cell SDR:
-
-“94, 11287, 12895, 13312, 13370, 24302, 24402, 24479, 24542, 24609, 24666, 24925, 25132, 25342, 25354, 25375, 25477, 25513, 25526, 25560“ and set of predictive cells:
-“530, 855, 1213, 1228, 1339, 1988, 2318, 2925, 13843, 14641, 14961, 15043, 15322, 24538, 24932, 25268”
-
-This corresponds to the input with index 23.
-
-indx 20 14-11-12-14-5-7-6-9-3-4-3-4-3-4-0-1-0-2-3-4-5-6-5-4-3-7-1-9-12-11-12-13/20 = similarity 0	 
-indx 21 11-12-14-5-7-6-9-3-4-3-4-3-4-0-1-0-2-3-4-5-6-5-4-3-7-1-9-12-11-12-13-14/20 = similarity 14	 
-indx:22	12-14-5-7-6-9-3-4-3-4-3-4-0-1-0-2-3-4-5-6-5-4-3-7-1-9-12-11-12-13-14-11/20 = similarity 0	 
-indx:*23*	14-5-7-6-9-3-4-3-4-3-4-0-1-0-2-3-4-5-6-5-4-3-7-1-9-12-11-12-13-14-11-12/20 = similarity 0	
-indx:24	5-7-6-9-3-4-3-4-3-4-0-1-0-2-3-4-5-6-5-4-3-7-1-9-12-11-12-13-14-11-12-14/20 = similarity 14
-
-
-The old implementation of the classifier traverses all SDRs and looks up for the most similar one. So, inputs with indexes 21 and 24 with the similarity of 14. That means the classifier is predicting two inputs at index 21 and 24. 
-
 Following changes are made:
 
 1.	The new version of the classifier returns the array of possible inputs.
@@ -118,5 +102,6 @@ Following changes are made:
 <img width="1320" alt="Screenshot 2021-06-27 at 20 55 38" src="https://user-images.githubusercontent.com/56980973/123556203-1f913200-d78a-11eb-867b-90840489f439.png">
 <img width="1321" alt="Screenshot 2021-06-27 at 20 56 01" src="https://user-images.githubusercontent.com/56980973/123556209-26b84000-d78a-11eb-805e-7b2c45f74308.png">
 
-
+Here the index 22,28,34 have an simliarity of 100. The previous classfier implemenation was providing only one possible outcome. 
+But now we the new implementaion provides a list of possible contexts.
 
