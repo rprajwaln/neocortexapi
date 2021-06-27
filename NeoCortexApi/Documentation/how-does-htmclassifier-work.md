@@ -103,7 +103,7 @@ Following changes are made:
 <img width="1321" alt="Screenshot 2021-06-27 at 20 56 01" src="https://user-images.githubusercontent.com/56980973/123556209-26b84000-d78a-11eb-805e-7b2c45f74308.png">
 
 Here the index 22,28,34 have an simliarity of 100. The previous classfier implemenation was providing only one possible outcome. 
-But now we the new implemented HTM classifier provides a list of possible predicted inputs.
+But now the newly implemented HTM classifier provides a list of possible predicted inputs.
 
 Method Signature
 
