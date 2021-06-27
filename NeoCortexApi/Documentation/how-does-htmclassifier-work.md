@@ -114,7 +114,6 @@ Following changes are made:
 
 1.	The new version of the classifier returns the array of possible inputs.
 2.	The classifier also looks for the input and looks up the position of the classifier in the entire learning process.
-In this case, the position of the classifier is at index 23. With this information, the classifier knows that the next predicted input one must be at position 24.
 
 <img width="1320" alt="Screenshot 2021-06-27 at 20 55 38" src="https://user-images.githubusercontent.com/56980973/123556203-1f913200-d78a-11eb-867b-90840489f439.png">
 <img width="1321" alt="Screenshot 2021-06-27 at 20 56 01" src="https://user-images.githubusercontent.com/56980973/123556209-26b84000-d78a-11eb-805e-7b2c45f74308.png">
