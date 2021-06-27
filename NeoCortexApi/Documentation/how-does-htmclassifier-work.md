@@ -105,3 +105,12 @@ Following changes are made:
 Here the index 22,28,34 have an simliarity of 100. The previous classfier implemenation was providing only one possible outcome. 
 But now we the new implementaion provides a list of possible contexts.
 
+Method Signature
+
+        /// <summary>
+        /// Gets the list predicted inputs sorted by similarity.
+        /// </summary>
+        /// <param name="predictiveCells"></param>
+        /// <param name="howMany">Specifies how many predicted SDRs should be reurned.</param>
+        /// <returns></returns>
+        public ICollection<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany);
