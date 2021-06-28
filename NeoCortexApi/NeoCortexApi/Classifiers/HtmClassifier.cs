@@ -139,7 +139,7 @@ namespace NeoCortexApi.Classifiers
                 {
                     if (pair.Value.SequenceEqual(celIndicies))
                     {
-                        Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
+                        //Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
                         res.Add(new ClassifierResult { PredictedInput = pair.Key, Similarity = (float)100.0, NumOfSameBits = pair.Value.Length});
                     }
                     else
@@ -153,13 +153,13 @@ namespace NeoCortexApi.Classifiers
                         
                         if (numOfSameBitsPct > maxSameBits)
                         {
-                            Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage} \t {Helpers.StringifyVector(pair.Value)}");
+                            //Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage} \t {Helpers.StringifyVector(pair.Value)}");
                             maxSameBits = numOfSameBitsPct;
                             predictedValue = pair.Key;
                             indxOfMatchingInp = n;
                         }
-                        else
-                            Debug.WriteLine($"<indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}");
+                        //else
+                            //Debug.WriteLine($"<indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}");
                     }
                     n++;
                 }
