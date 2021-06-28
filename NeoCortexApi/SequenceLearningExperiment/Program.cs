@@ -119,6 +119,8 @@ namespace SequenceLearningExperiment
 
             
             //var inputValues = new List<double>(new double[] {  5.0, 3.0, 2.0, 5.0, 2.0, 6.0});
+            
+            //sequence with multiple possibilties
             var inputValues = new List<double>(new double[] {1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 4.0, 5.0, 6.0});
 
 
