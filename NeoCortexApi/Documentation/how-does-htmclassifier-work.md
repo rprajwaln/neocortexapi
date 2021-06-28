@@ -119,7 +119,9 @@ howMany defines the number of top predictions that should be considered in the p
 
 For Example for the sequence 1, 2, 3, 4, 3, 2, 4, 5, 6
 After the number 2, there are two possibilties of outcomes :
-2-3 and 2-4
+
+2-3  
+2-4
 
 Now the new implmented HTM classfier method returns all possibilties as shown in following figure :
 
