@@ -116,3 +116,12 @@ Method Signature
         public ICollection<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany);
 
 howMany defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
+
+For Example for the sequence 1, 2, 3, 4, 3, 2, 4, 5, 6
+After the number 2, there are two possibilties of outcomes :
+2-3 and 2-4
+
+Now the new implmented HTM classfier method returns all possibilties as shown in following figure :
+
+<img width="617" alt="Screenshot 2021-06-28 at 09 54 18" src="https://user-images.githubusercontent.com/56980973/123600309-d62afc00-d7f6-11eb-9cd4-09e1cd788647.png">
+
