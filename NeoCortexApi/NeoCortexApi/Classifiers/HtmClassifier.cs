@@ -11,6 +11,7 @@ using System.Text;
 using NeoCortexApi.Entities;
 using NeoCortexApi.Utility;
 
+
 namespace NeoCortexApi.Classifiers
 {
     /// <summary>
@@ -164,6 +165,11 @@ namespace NeoCortexApi.Classifiers
                     n++;
                 }
             }
+            
+        
+                
+            
+            
 
             int cnt = 0;
             foreach (var keyPair in dict.Values.OrderByDescending(key => key.Similarity))

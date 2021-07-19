@@ -121,10 +121,11 @@ namespace SequenceLearningExperiment
             //var inputValues = new List<double>(new double[] {  5.0, 3.0, 2.0, 5.0, 2.0, 6.0});
             
             //sequence with multiple possibilties
-            var inputValues = new List<double>(new double[] {1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 4.0, 5.0, 6.0});
+            
+            var inputValues = new List<double>(new double[] {1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 4.0, 5.0, 6.0, 1.0, 7.0});
 
 
-            //var inputValues = new List<double>(new double[] { 2.0, 3.0, 2.0, 5.0, 2.0, 6.0,2.0, 6.0,2.0, 5.0,2.0, 3.0,2.0, 3.0, 2.0, 5.0, 2.0, 6.0 });
+            //var inputValues = new List<double>(new double[] { 2.0, 3.0, 2.0, 5.0, 2.0, 6.0, 2.0, 6.0, 2.0, 5.0, 2.0, 3.0, 2.0, 3.0, 2.0, 5.0, 2.0, 6.0 });
 
             RunExperiment(inputBits, p, encoder, inputValues);
         }
@@ -374,8 +375,13 @@ namespace SequenceLearningExperiment
             }
 
             Debug.WriteLine("------------ END ------------");
+            learntSequence(2,false, layer1, cls);
+            
+        }
 
-            var result = layer1.Compute(2, false) as ComputeCycle;
+        private static void learntSequence(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
+        {
+            var result = layer1.Compute(input, learn) as ComputeCycle;
 
             var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 2);
             foreach (var ans in predresult)
@@ -386,8 +392,6 @@ namespace SequenceLearningExperiment
                 }
             }
         }
-
-
 
         private static string GetKey(List<string> prevInputs, double input)
         {
