@@ -29,12 +29,12 @@ The following shows the trace output of the learning process.
 <img width="1321" alt="Screenshot 2021-06-27 at 20 56 01" src="https://user-images.githubusercontent.com/56980973/123556209-26b84000-d78a-11eb-805e-7b2c45f74308.png">
 
 
-The classifier is traversing through all memorized SDRs and tries to match the best ones. It is able detect complex sequences. The classifier tracks the list of inputs during the learning process.
+The classifier is traversing through all memorized SDRs and tries to match the best ones. It is able detect complex sequences and tracks the list of inputs during the learning process.
 
 1.	The classifier returns the array of possible inputs.
 2.	The classifier also looks for the input and looks up the position of the classifier in the entire learning process.
-Here the index 22,28,34 have a simliarity of 100.  
-The HTM classifier provides a list of possible predicted inputs.
+
+Here the index 22,28,34 have a simliarity of 100. The HTM classifier provides a list of possible predicted inputs.
 
 Method Signature
 
@@ -46,7 +46,7 @@ Method Signature
         /// <returns></returns>
         public ICollection<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany);
 
-howMany defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
+Here, howMany defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
 
 For Example for the sequence 1, 2, 3, 4, 3, 2, 4, 5, 6
 After the number 2, there are two possibilties of outcomes :
