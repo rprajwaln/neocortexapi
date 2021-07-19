@@ -4,7 +4,7 @@ The classifier provides two methods:
 
 Learn(string key, int[] sdr)
 
-String Predict(int[] predictiveCells)
+GetPredictedInputValues(Cell[] predictiveCells, short howMany)
 
 The method learn receives the key string, that represents the sequence and memorizes the SDR for the given key.
 Assume, we learn following sequence: 
@@ -90,20 +90,19 @@ and the second one
 
 The current implementation of the classifier peeks the first best matching one, which is in more complex sequences not a sufficient solution. As you see, the '14' was correcttly predicted. But '14' after '13' is a different context than '14' after '12'.
 
-### New version of the classifier
-We have improved the classifier to be able to detect more complex sequence.
+
+The classifier is able detect complex sequences.
 The classifier tracks the list of inputs during the learning process.
 
-Following changes are made:
 
-1.	The new version of the classifier returns the array of possible inputs.
+1.	The classifier returns the array of possible inputs.
 2.	The classifier also looks for the input and looks up the position of the classifier in the entire learning process.
 
 <img width="1320" alt="Screenshot 2021-06-27 at 20 55 38" src="https://user-images.githubusercontent.com/56980973/123556203-1f913200-d78a-11eb-867b-90840489f439.png">
 <img width="1321" alt="Screenshot 2021-06-27 at 20 56 01" src="https://user-images.githubusercontent.com/56980973/123556209-26b84000-d78a-11eb-805e-7b2c45f74308.png">
 
-Here the index 22,28,34 have an simliarity of 100. The previous classfier implemenation was providing only one possible outcome. 
-But now the newly implemented HTM classifier provides a list of possible predicted inputs.
+Here the index 22,28,34 have a simliarity of 100.  
+The HTM classifier provides a list of possible predicted inputs.
 
 Method Signature
 
