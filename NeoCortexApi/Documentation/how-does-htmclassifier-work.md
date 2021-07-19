@@ -49,6 +49,7 @@ Method Signature
 Here, howMany defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
 
 For Example for the sequence 1, 2, 3, 4, 3, 2, 4, 5, 6
+
 After the number 2, there are two possibilties of outcomes :
 
 2-3  
