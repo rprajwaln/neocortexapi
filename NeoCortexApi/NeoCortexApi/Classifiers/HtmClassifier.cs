@@ -42,9 +42,7 @@ namespace NeoCortexApi.Classifiers
 
         public void ClearState()
         {
-            //this.activeMap.Clear();
             m_ActiveMap2.Clear();
-            // this.inputSequence.Clear();
         }
 
         public void Learn(TIN input, Cell[] activeCells, bool learn)
@@ -79,8 +77,6 @@ namespace NeoCortexApi.Classifiers
             {
                 if (!m_ActiveMap2[input].SequenceEqual(cellIndicies))
                 {
-                    // double numOfSameBitsPct = (double)(((double)(this.activeMap2[input].Intersect(cellIndicies).Count()) / Math.Max((double)cellIndicies.Length, this.activeMap2[input].Length)));
-                    // double numOfSameBitsPct = (double)(((double)(this.activeMap2[input].Intersect(cellIndicies).Count()) / (double)this.activeMap2[input].Length));
                     var numOfSameBitsPct = m_ActiveMap2[input].Intersect(cellIndicies).Count();
                     Debug.WriteLine(
                         $"Prev/Now/Same={m_ActiveMap2[input].Length}/{cellIndicies.Length}/{numOfSameBitsPct}");
@@ -140,36 +136,25 @@ namespace NeoCortexApi.Classifiers
                 {
                     if (pair.Value.SequenceEqual(celIndicies))
                     {
-                        //Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
                         res.Add(new ClassifierResult { PredictedInput = pair.Key, Similarity = (float)100.0, NumOfSameBits = pair.Value.Length});
                     }
                     else
                     {
-                        // Tried following:
-                        //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(arr).Count()) / Math.Max(arr.Length, pair.Value.Count())));
-                        //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(celIndicies).Count()) / (double)pair.Value.Length));// ;
                         var numOfSameBitsPct = pair.Value.Intersect(celIndicies).Count();
                         double simPercentage = Math.Round(MathHelpers.CalcArraySimilarity(pair.Value, celIndicies), 2);
                         dict.Add(pair.Key, new ClassifierResult { PredictedInput = pair.Key, NumOfSameBits = numOfSameBitsPct, Similarity = simPercentage });
                         
                         if (numOfSameBitsPct > maxSameBits)
                         {
-                            //Debug.WriteLine($">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage} \t {Helpers.StringifyVector(pair.Value)}");
+                            
                             maxSameBits = numOfSameBitsPct;
                             predictedValue = pair.Key;
                             indxOfMatchingInp = n;
                         }
-                        //else
-                            //Debug.WriteLine($"<indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} ,Same Bits = {numOfSameBitsPct}\t, Similarity% {simPercentage}\t {Helpers.StringifyVector(pair.Value)}");
                     }
                     n++;
                 }
             }
-            
-        
-                
-            
-            
 
             int cnt = 0;
             foreach (var keyPair in dict.Values.OrderByDescending(key => key.Similarity))
@@ -215,10 +200,7 @@ namespace NeoCortexApi.Classifiers
                             $">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
                         return pair.Key;
                     }
-
-                    // Tried following:
-                    //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(arr).Count()) / Math.Max(arr.Length, pair.Value.Count())));
-                    //double numOfSameBitsPct = (double)(((double)(pair.Value.Intersect(celIndicies).Count()) / (double)pair.Value.Length));// ;
+                    
                     var numOfSameBitsPct = pair.Value.Intersect(celIndicies).Count();
                     if (numOfSameBitsPct > maxSameBits)
                     {
@@ -238,64 +220,7 @@ namespace NeoCortexApi.Classifiers
 
             return predictedValue;
         }
-        /*
-        //
-        // This loop peeks the best input
-        foreach (var pair in this.activeMap)
-        {
-            //
-            // We compare only outputs which are similar in the length.
-            // This is important, because some outputs, which are not related to the comparing output
-            // might have much mode cells (length) than the current output. With this, outputs with much more cells
-            // would be declared as matching outputs even if they are not.
-            if ((Math.Min(arr.Length, pair.Key.Length) / Math.Max(arr.Length, pair.Key.Length)) > 0.9)
-            {
-                double numOfSameBitsPct = (double)((double)(pair.Key.Intersect(arr).Count() / (double)arr.Length));
-                if (numOfSameBitsPct > maxSameBits)
-                {
-                    Debug.WriteLine($"indx:{n}\tbits/arrbits: {pair.Key.Length}/{arr.Length}\t{pair.Value} = similarity {numOfSameBitsPct}\t {Helpers.StringifyVector(pair.Key)}");
-                    maxSameBits = numOfSameBitsPct;
-                    predictedValue = pair.Value;
-                    indxOfMatchingInp = n;
-                }
-
-                //if (maxSameBits > 0.9)
-                //{
-                //    sortedMatches.Add(n);
-                //    // We might have muliple matchin candidates.
-                //    // For example: Let the matchin input be i1
-                //    // I1 - c1, c2, c3, c4
-                //    // I2 - c1, c2, c3, c4, c5, c6
-
-                //    Debug.WriteLine($"cnt:{n}\t{pair.Value} = bits {numOfSameBitsPct}\t {Helpers.StringifyVector(pair.Key)}");
-                //}
-            }
-            n++;
-        }
-
-        foreach (var item in sortedMatches)
-        {
-
-        }
-
-        Debug.Write("[ ");
-        for (int i = Math.Max(0, indxOfMatchingInp - 3); i < Math.Min(indxOfMatchingInp + 3, this.activeMap.Keys.Count); i++)
-        {
-            if (i == indxOfMatchingInp) Debug.Write("* ");
-            Debug.Write($"{this.inputSequence[i]}");
-            if (i == indxOfMatchingInp) Debug.Write(" *");
-
-            Debug.Write(", ");
-        }
-        Debug.WriteLine(" ]");
-
-        return predictedValue;
-        //return activeMap[ComputeHash(FlatArray(output))];
-    }
-    return default(TIN);
-    }*/
-
-
+        
         /// <summary>
         /// Traces out all cell indicies grouped by input value.
         /// </summary>
@@ -346,51 +271,7 @@ namespace NeoCortexApi.Classifiers
                 }
             }
         }
-
-
-
-        /*
-    /// <summary>
-    /// Traces out all cell indicies grouped by input value.
-    /// </summary>
-    public void TraceState2(string fileName = null)
-    {
-
-        List<TIN> processedValues = new List<TIN>();
-
-        foreach (var item in activeMap.Values)
-        {
-            if (processedValues.Contains(item) == false)
-            {
-                StreamWriter sw = null;
-
-                if (fileName != null)
-                    sw = new StreamWriter(fileName.Replace(".csv", $"_Digit_{item}.csv"));
-
-                Debug.WriteLine("");
-                Debug.WriteLine($"{item}");
-
-                foreach (var inp in this.activeMap.Where(i => EqualityComparer<TIN>.Default.Equals((TIN)i.Value, item)))
-                {
-                    Debug.WriteLine($"{Helpers.StringifyVector(inp.Key)}");
-
-                    if (sw != null)
-                        sw.WriteLine($"{Helpers.StringifyVector(inp.Key)}");
-                }
-
-                if (sw != null)
-                {
-                    sw.Flush();
-                    sw.Close();
-                }
-
-                processedValues.Add(item);
-            }
-        }
-    }
-     */
-
-
+        
         private string ComputeHash(byte[] rawData)
         {
             // Create a SHA256   
