@@ -102,7 +102,9 @@ Method Signature
 
 Now the implemented HTM classifier method returns all possibilities as shown in following figure:
 
-![image](https://user-images.githubusercontent.com/56980973/130371205-6a50e104-6378-404d-a36a-84aa030c175a.png)
+    Please enter a number that has been learnt
+    2
+
 
   
      Active segments: 80, Matching segments: 120
