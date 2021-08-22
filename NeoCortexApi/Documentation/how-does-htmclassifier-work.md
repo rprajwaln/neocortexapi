@@ -105,6 +105,7 @@ Now the implemented HTM classifier method returns all possibilities as shown in 
     Please enter a number that has been learnt
     2
 
+After you enter the number that has been learnt by the classifier, we get the possible preidcted outputs.
 
   
      Active segments: 80, Matching segments: 120
