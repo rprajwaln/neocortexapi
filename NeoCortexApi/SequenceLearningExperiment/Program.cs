@@ -98,9 +98,8 @@ namespace SequenceLearningExperiment
 
             // Stable and reached 100% accuracy with 531 cycles.
             // var inputValues = new List<double>(new double[] {0.0, 1.0, 0.0, 2.0, 3.0, 4.0, 5.0, 6.0, 5.0, 4.0, 3.0, 7.0, 1.0, 9.0, 12.0, 11.0}
-            
-            // Stable and reached 100% accuracy with 145 cycles.
-            
+
+            // Calling Method to input values
             inputValues = InputSequence(inputValues);
             
             // Sequence with multiple possibilties
