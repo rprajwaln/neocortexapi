@@ -52,8 +52,10 @@ The following figure shows the trace for  sequence and here the index 0,6,12 hav
 
 Once the classifier has learnt the sequence, you can just by entering the number in the sequence, then it would call the ‘Inference’ method and would list out the possible predicted outputs.
 
-private static List<double> InputSequence( List<double> inputValues)
-        {
+Method Signature
+
+      private static List<double> InputSequence( List<double> inputValues)
+       {
             Console.WriteLine("HTM Classifier is ready");
             Console.WriteLine("Please enter a sequence to be learnt");
             string userValue = Console.ReadLine();
@@ -65,10 +67,28 @@ private static List<double> InputSequence( List<double> inputValues)
                 {
                     inputValues.Add(sequence);
                 }
-            }
+         }
 
             return inputValues;
         }
+        
+Once the classifier has learnt the sequence, you can just by entering the number in the sequence, then it would call the ‘Inference’ method and would list out the possible predicted outputs.
+
+Method Signature
+
+       private static void Inference(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
+        {
+            var result = layer1.Compute(input, false) as ComputeCycle;
+            var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 3);
+            Console.WriteLine("\n The predictions are:");
+            foreach (var ans in predresult)
+            {
+                Console.WriteLine($"Predicted Input: {string.Join(", ", ans.PredictedInput)}," +
+                                  $"\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, " +
+                                  $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
+            }
+        }
+
 
 Now the implemented HTM classifier method returns all possibilities as shown in following figure:
 ![image](https://user-images.githubusercontent.com/56980973/130371205-6a50e104-6378-404d-a36a-84aa030c175a.png)
