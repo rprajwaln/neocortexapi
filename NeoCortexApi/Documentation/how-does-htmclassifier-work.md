@@ -31,24 +31,48 @@ The classifier is traversing through all memorized SDRs and tries to match the b
 
 Method Signature
 
-![image](https://user-images.githubusercontent.com/56980973/130371113-21f4ef8b-6e39-49c2-af95-f4da7ef24e53.png)
+        public List<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany)
+        {
+            List<ClassifierResult> res = new List<ClassifierResult>();
+            double maxSameBits = 0;
+            TIN predictedValue = default;
+            Dictionary<TIN, ClassifierResult> dict = new Dictionary<TIN, ClassifierResult>();
+         }
 
 The implemented method ‘GetPredcitedInputValues’ in HTM classifier provides a list of possible predicted inputs. Here ‘howMany’ parameter defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
 
 
 The following figure shows the trace for  sequence and here the index 0,6,12 have a similarity of 100. The classifier implementation provides top three possible outcomes. 
-•	2-3
-•	2-4
-•	2-6
+1. 2-3
+2. 2-4
+3. 2-6
 
-![image](https://user-images.githubusercontent.com/56980973/130371180-74d9510b-2fb4-4719-b075-5ebefd327f86.png)
+![image](https://user-images.githubusercontent.com/56980973/130371328-76e191e0-3009-46b1-90d2-4bb5812215c6.png)
+
 
 Once the classifier has learnt the sequence, you can just by entering the number in the sequence, then it would call the ‘Inference’ method and would list out the possible predicted outputs.
 
-![image](https://user-images.githubusercontent.com/56980973/130371191-74005884-d1c1-4b89-9d20-7402c23a6a52.png)
+private static List<double> InputSequence( List<double> inputValues)
+        {
+            Console.WriteLine("HTM Classifier is ready");
+            Console.WriteLine("Please enter a sequence to be learnt");
+            string userValue = Console.ReadLine();
+            var numbers = userValue.Split(',');
+            double sequence;
+            foreach (var number in numbers)
+            {
+                if (double.TryParse(number, out sequence))
+                {
+                    inputValues.Add(sequence);
+                }
+            }
+
+            return inputValues;
+        }
 
 Now the implemented HTM classifier method returns all possibilities as shown in following figure:
 ![image](https://user-images.githubusercontent.com/56980973/130371205-6a50e104-6378-404d-a36a-84aa030c175a.png)
+  
 ![image](https://user-images.githubusercontent.com/56980973/130371208-6c412bb8-4324-4204-b3a2-32014c4177a0.png)
 
 The results show that the proposed classifiers enhance the classification performance of HTM-CLA and their performance.
