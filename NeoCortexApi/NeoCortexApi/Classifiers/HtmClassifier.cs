@@ -137,6 +137,7 @@ namespace NeoCortexApi.Classifiers
                     if (pair.Value.SequenceEqual(celIndicies))
                     {
                         res.Add(new ClassifierResult { PredictedInput = pair.Key, Similarity = (float)100.0, NumOfSameBits = pair.Value.Length});
+                        
                     }
                     else
                     {
@@ -146,7 +147,6 @@ namespace NeoCortexApi.Classifiers
                         
                         if (numOfSameBitsPct > maxSameBits)
                         {
-                            
                             maxSameBits = numOfSameBitsPct;
                             predictedValue = pair.Key;
                             indxOfMatchingInp = n;
@@ -160,7 +160,7 @@ namespace NeoCortexApi.Classifiers
             foreach (var keyPair in dict.Values.OrderByDescending(key => key.Similarity))
             {
                 res.Add(keyPair);
-                    if (++cnt >= howMany)
+                    if (++cnt > howMany)
                         break;
             }
 

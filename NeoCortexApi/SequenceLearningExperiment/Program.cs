@@ -23,6 +23,7 @@ namespace SequenceLearningExperiment
         {
             int inputBits = 100;
             int numColumns = 2048;
+            List<double> inputValues = inputValues = new List<double>(new double[] { });
             HtmConfig cfg = new HtmConfig(new int[] { inputBits }, new int[] { numColumns })
             {
                 Random = new ThreadSafeRandom(42),
@@ -99,11 +100,12 @@ namespace SequenceLearningExperiment
             // var inputValues = new List<double>(new double[] {0.0, 1.0, 0.0, 2.0, 3.0, 4.0, 5.0, 6.0, 5.0, 4.0, 3.0, 7.0, 1.0, 9.0, 12.0, 11.0}
             
             // Stable and reached 100% accuracy with 145 cycles.
-            // var inputValues = new List<double>(new double[] {  5.0, 3.0, 2.0, 5.0, 2.0, 6.0});
+            
+            inputValues = InputSequence(inputValues);
             
             // Sequence with multiple possibilties
             // Stable and reached 100% accuracy with 542 cycles.
-            var inputValues = new List<double>(new double[] {1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 4.0, 5.0, 6.0, 1.0, 7.0});
+            //var inputValues = new List<double>(new double[] {1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 4.0, 5.0, 6.0, 1.0, 7.0});
             
             // Stable and reached 100% accuracy with 650 cycles.
             // var inputValues = new List<double>(new double[] { 2.0, 3.0, 2.0, 5.0, 2.0, 6.0, 2.0, 6.0, 2.0, 5.0, 2.0, 3.0, 2.0, 3.0, 2.0, 5.0, 2.0, 6.0 });
@@ -306,18 +308,41 @@ namespace SequenceLearningExperiment
             }
 
             Debug.WriteLine("------------ END ------------");
-            inference(2,false, layer1, cls);
+            
+            Console.WriteLine("\n Please enter a number that has been learnt");
+            int inputNumber = Convert.ToInt16(Console.ReadLine());
+            Inference(inputNumber,false, layer1, cls);
             
         }
 
-        private static void inference(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
+        private static List<double> InputSequence( List<double> inputValues)
+        {
+            Console.WriteLine("HTM Classifier is ready");
+            Console.WriteLine("Please enter a sequence to be learnt");
+            string userValue = Console.ReadLine();
+            var numbers = userValue.Split(',');
+            double sequence;
+            foreach (var number in numbers)
+            {
+                if (double.TryParse(number, out sequence))
+                {
+                    inputValues.Add(sequence);
+                }
+            }
+
+            return inputValues;
+        }
+
+        private static void Inference(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
         {
             var result = layer1.Compute(input, false) as ComputeCycle;
-
-            var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 6);
+            var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 3);
+            Console.WriteLine("\n The predictions are:");
             foreach (var ans in predresult)
             {
-                Debug.WriteLine($"Predicted Input: {string.Join(", ", ans.PredictedInput)},\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, \tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
+                Console.WriteLine($"Predicted Input: {string.Join(", ", ans.PredictedInput)}," +
+                                  $"\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, " +
+                                  $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
             }
         }
 
