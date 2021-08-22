@@ -24,38 +24,35 @@ That means ‘3’ followed by ‘2’ produces a different set of active cells 
 
 The following shows the trace output of the learning process.
 
-
-<img width="1320" alt="Screenshot 2021-06-27 at 20 55 38" src="https://user-images.githubusercontent.com/56980973/123556203-1f913200-d78a-11eb-867b-90840489f439.png">
-<img width="1321" alt="Screenshot 2021-06-27 at 20 56 01" src="https://user-images.githubusercontent.com/56980973/123556209-26b84000-d78a-11eb-805e-7b2c45f74308.png">
-
-
 The classifier is traversing through all memorized SDRs and tries to match the best ones. It is able detect complex sequences and tracks the list of inputs during the learning process.
 
 1.	The classifier returns the array of possible inputs.
 2.	The classifier also looks for the input and looks up the position of the classifier in the entire learning process.
 
-Here the index 22,28,34 have a simliarity of 100. The HTM classifier provides a list of possible predicted inputs.
-
 Method Signature
 
-        /// <summary>
-        /// Gets the list predicted inputs sorted by similarity.
-        /// </summary>
-        /// <param name="predictiveCells"></param>
-        /// <param name="howMany">Specifies how many predicted SDRs should be reurned.</param>
-        /// <returns></returns>
-        public ICollection<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany);
+![image](https://user-images.githubusercontent.com/56980973/130371113-21f4ef8b-6e39-49c2-af95-f4da7ef24e53.png)
 
-Here, howMany defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
+The implemented method ‘GetPredcitedInputValues’ in HTM classifier provides a list of possible predicted inputs. Here ‘howMany’ parameter defines the number of top predictions that should be considered in the predicted list from the HTM Classifier.
 
-For Example for the sequence 1-2-3-4-3-2-4-5-6
 
-After the number 2, there are two possibilties of outcomes :
+The following figure shows the trace for  sequence and here the index 0,6,12 have a similarity of 100. The classifier implementation provides top three possible outcomes. 
+•	2-3
+•	2-4
+•	2-6
 
-2-3  
-2-4
+![image](https://user-images.githubusercontent.com/56980973/130371180-74d9510b-2fb4-4719-b075-5ebefd327f86.png)
 
-The  HTM classfier method returns all possibilties as shown in following figure :
+Once the classifier has learnt the sequence, you can just by entering the number in the sequence, then it would call the ‘Inference’ method and would list out the possible predicted outputs.
 
-<img width="617" alt="Screenshot 2021-06-28 at 09 54 18" src="https://user-images.githubusercontent.com/56980973/123600309-d62afc00-d7f6-11eb-9cd4-09e1cd788647.png">
+![image](https://user-images.githubusercontent.com/56980973/130371191-74005884-d1c1-4b89-9d20-7402c23a6a52.png)
+
+Now the implemented HTM classifier method returns all possibilities as shown in following figure:
+![image](https://user-images.githubusercontent.com/56980973/130371205-6a50e104-6378-404d-a36a-84aa030c175a.png)
+![image](https://user-images.githubusercontent.com/56980973/130371208-6c412bb8-4324-4204-b3a2-32014c4177a0.png)
+
+The results show that the proposed classifiers enhance the classification performance of HTM-CLA and their performance.
+
+
+
 
