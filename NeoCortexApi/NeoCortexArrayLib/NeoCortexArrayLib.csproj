@@ -15,4 +15,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.11.0-dev-01367" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
+
 </Project>

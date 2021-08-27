@@ -20,5 +20,12 @@
     <ProjectReference Include="..\NeoCortexApi\NeoCortexApi.csproj" />
     <ProjectReference Include="..\NeoCortexEntities\NeoCortexEntities.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ILogger.Moq" Version="1.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
+    <PackageReference Include="Serilog" Version="2.11.0-dev-01367" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
   
 </Project>

@@ -2,28 +2,34 @@
 using NeoCortexApi.DistributedComputeLib;
 using NeoCortexApi.Encoders;
 using NeoCortexApi.Entities;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System;
+using Microsoft.Extensions.Logging;
 using NeoCortexApi.Classifiers;
 using NeoCortexApi.Network;
+
 
 namespace SequenceLearningExperiment
 {
     class Program
     {
+
         static void Main(string[] args)
         {
-            MusicNotesExperiment();
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+            ILogger logger = loggerFactory.CreateLogger<Program>();
+            MusicNotesExperiment(logger);
         }
 
-        public static void MusicNotesExperiment()
+        public static void MusicNotesExperiment(ILogger logger)
         {
             int inputBits = 100;
             int numColumns = 2048;
             List<double> inputValues = inputValues = new List<double>(new double[] { });
+            HtmClassifier<string, ComputeCycle> cls = new HtmClassifier<string, ComputeCycle>();
             HtmConfig cfg = new HtmConfig(new int[] { inputBits }, new int[] { numColumns })
             {
                 Random = new ThreadSafeRandom(42),
@@ -99,9 +105,6 @@ namespace SequenceLearningExperiment
             // Stable and reached 100% accuracy with 531 cycles.
             // var inputValues = new List<double>(new double[] {0.0, 1.0, 0.0, 2.0, 3.0, 4.0, 5.0, 6.0, 5.0, 4.0, 3.0, 7.0, 1.0, 9.0, 12.0, 11.0}
 
-            // Calling Method to input values
-            inputValues = InputSequence(inputValues);
-            
             // Sequence with multiple possibilties
             // Stable and reached 100% accuracy with 542 cycles.
             //var inputValues = new List<double>(new double[] {1.0, 2.0, 3.0, 4.0, 3.0, 2.0, 4.0, 5.0, 6.0, 1.0, 7.0});
@@ -109,7 +112,10 @@ namespace SequenceLearningExperiment
             // Stable and reached 100% accuracy with 650 cycles.
             // var inputValues = new List<double>(new double[] { 2.0, 3.0, 2.0, 5.0, 2.0, 6.0, 2.0, 6.0, 2.0, 5.0, 2.0, 3.0, 2.0, 3.0, 2.0, 5.0, 2.0, 6.0 });
 
-            RunExperiment(inputBits, cfg, encoder, inputValues);
+            // Calling Method to input values
+            inputValues = cls.InputSequence(inputValues);
+            
+            RunExperiment(inputBits, cfg, encoder, inputValues, cls, logger);
         }
 
 
@@ -117,7 +123,7 @@ namespace SequenceLearningExperiment
         /// <summary>
         ///
         /// </summary>
-        private static void RunExperiment(int inputBits, HtmConfig cfg, EncoderBase encoder, List<double> inputValues)
+        private static void RunExperiment(int inputBits, HtmConfig cfg, EncoderBase encoder, List<double> inputValues, HtmClassifier<string, ComputeCycle> cls, ILogger logger)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -133,8 +139,6 @@ namespace SequenceLearningExperiment
 
             var mem = new Connections(cfg);
             bool isInStableState;
-            
-            HtmClassifier<string, ComputeCycle> cls = new HtmClassifier<string, ComputeCycle>();
 
             var numInputs = inputValues.Distinct<double>().ToList().Count;
 
@@ -144,10 +148,10 @@ namespace SequenceLearningExperiment
             {
                 if (isStable)
                     // Event should be fired when entering the stable state.
-                    Debug.WriteLine($"STABLE: Patterns: {numPatterns}, Inputs: {seenInputs}, iteration: {seenInputs / numPatterns}");
+                    logger.LogInformation($"STABLE: Patterns: {numPatterns}, Inputs: {seenInputs}, iteration: {seenInputs / numPatterns}");
                 else
                     // Ideal SP should never enter unstable state after stable state.
-                    Debug.WriteLine($"INSTABLE: Patterns: {numPatterns}, Inputs: {seenInputs}, iteration: {seenInputs / numPatterns}");
+                    logger.LogInformation($"INSTABLE: Patterns: {numPatterns}, Inputs: {seenInputs}, iteration: {seenInputs / numPatterns}");
 
                 if (numPatterns != numInputs)
                     throw new InvalidOperationException("Stable state must observe all input patterns");
@@ -205,11 +209,11 @@ namespace SequenceLearningExperiment
 
                 cycle++;
 
-                Debug.WriteLine($"-------------- Cycle {cycle} ---------------");
+                logger.LogInformation($"-------------- Cycle {cycle} ---------------");
 
                 foreach (var input in inputs)
                 {
-                    Debug.WriteLine($"-------------- {input} ---------------");
+                    logger.LogInformation($"-------------- {input} ---------------");
 
                     var lyrOut = layer1.Compute(input, learn) as ComputeCycle;
 
@@ -226,38 +230,38 @@ namespace SequenceLearningExperiment
                     cls.Learn(key, lyrOut.ActiveCells.ToArray());
 
                     if (learn == false)
-                        Debug.WriteLine($"Inference mode");
+                        logger.LogInformation($"Inference mode");
 
-                    Debug.WriteLine($"Col  SDR: {Helpers.StringifyVector(lyrOut.ActivColumnIndicies)}");
-                    Debug.WriteLine($"Cell SDR: {Helpers.StringifyVector(lyrOut.ActiveCells.Select(c => c.Index).ToArray())}");
+                    logger.LogInformation($"Col  SDR: {Helpers.StringifyVector(lyrOut.ActivColumnIndicies)}");
+                    logger.LogInformation($"Cell SDR: {Helpers.StringifyVector(lyrOut.ActiveCells.Select(c => c.Index).ToArray())}");
 
                     if (key == lastPredictedValue)
                     {
                         matches++;
-                        Debug.WriteLine($"Match. Actual value: {key} - Predicted value: {lastPredictedValue}");
+                        logger.LogInformation($"Match. Actual value: {key} - Predicted value: {lastPredictedValue}");
                     }
                     else
-                        Debug.WriteLine($"Missmatch! Actual value: {key} - Predicted value: {lastPredictedValue}");
+                        logger.LogInformation($"Missmatch! Actual value: {key} - Predicted value: {lastPredictedValue}");
 
                     if (lyrOut.PredictiveCells.Count > 0)
                     {
                         var predictedInputValue = cls.GetPredictedInputValues(lyrOut.PredictiveCells.ToArray(), 3);
                         
-                        Debug.WriteLine($"Current Input: {input}");
-                        Debug.WriteLine("The predictions with similarity greater than 50% are");
+                        logger.LogInformation($"Current Input: {input}");
+                        logger.LogInformation("The predictions with similarity greater than 50% are");
                         
                         foreach (var t in predictedInputValue)
                         {
                             if (t.Similarity >= (double) 50.00)
                             {
-                                Debug.WriteLine($"Predicted Input: {string.Join(", ", t.PredictedInput)},\tSimilarity Percentage: {string.Join(", ", t.Similarity)}, \tNumber of Same Bits: {string.Join(", ", t.NumOfSameBits)}");
+                                logger.LogInformation($"Predicted Input: {string.Join(", ", t.PredictedInput)},\tSimilarity Percentage: {string.Join(", ", t.Similarity)}, \tNumber of Same Bits: {string.Join(", ", t.NumOfSameBits)}");
                             }
                         }
                         lastPredictedValue = predictedInputValue.First().PredictedInput;
                     }
                     else
                     {
-                        Debug.WriteLine($"NO CELLS PREDICTED for next cycle.");
+                        logger.LogInformation($"NO CELLS PREDICTED for next cycle.");
                         lastPredictedValue = String.Empty;
                     }
                 }
@@ -265,84 +269,80 @@ namespace SequenceLearningExperiment
 
                 double accuracy = (double)matches / (double)inputs.Length * 100.0;
 
-                Debug.WriteLine($"Cycle: {cycle}\tMatches={matches} of {inputs.Length}\t {accuracy}%");
+                logger.LogInformation($"Cycle: {cycle}\tMatches={matches} of {inputs.Length}\t {accuracy}%");
 
                 if (accuracy == 100.0)
                 {
                     maxMatchCnt++;
-                    Debug.WriteLine($"100% accuracy reched {maxMatchCnt} times.");
+                    logger.LogInformation($"100% accuracy reched {maxMatchCnt} times.");
                     if (maxMatchCnt >= 30)
                     {
                         sw.Stop();
-                        Debug.WriteLine($"Exit experiment in the stable state after 30 repeats with 100% of accuracy. Elapsed time: {sw.ElapsedMilliseconds / 1000 / 60} min.");
+                        logger.LogInformation($"Exit experiment in the stable state after 30 repeats with 100% of accuracy. Elapsed time: {sw.ElapsedMilliseconds / 1000 / 60} min.");
                         learn = false;
                         break;
                     }
                 }
                 else if (maxMatchCnt > 0)
                 {
-                    Debug.WriteLine($"At 100% accuracy after {maxMatchCnt} repeats we get a drop of accuracy with {accuracy}. This indicates instable state. Learning will be continued.");
+                    logger.LogInformation($"At 100% accuracy after {maxMatchCnt} repeats we get a drop of accuracy with {accuracy}. This indicates instable state. Learning will be continued.");
                     maxMatchCnt = 0;
                 }
             }
 
-            Debug.WriteLine("---- cell state trace ----");
+            logger.LogInformation("---- cell state trace ----");
 
             cls.TraceState($"cellState_MinPctOverlDuty-{cfg.MinPctOverlapDutyCycles}_MaxBoost-{cfg.MaxBoost}.csv");
 
-            Debug.WriteLine("---- Spatial Pooler column state  ----");
+            logger.LogInformation("---- Spatial Pooler column state  ----");
 
             foreach (var input in activeColumnsLst)
             {
                 using (StreamWriter colSw = new StreamWriter($"ColumState_MinPctOverlDuty-{cfg.MinPctOverlapDutyCycles}_MaxBoost-{cfg.MaxBoost}_input-{input.Key}.csv"))
                 {
-                    Debug.WriteLine($"------------ {input.Key} ------------");
+                    logger.LogInformation($"------------ {input.Key} ------------");
 
                     foreach (var actCols in input.Value)
                     {
-                        Debug.WriteLine(Helpers.StringifyVector(actCols.ToArray()));
+                        logger.LogInformation(Helpers.StringifyVector(actCols.ToArray()));
                         colSw.WriteLine(Helpers.StringifyVector(actCols.ToArray()));
                     }
                 }
             }
 
-            Debug.WriteLine("------------ END ------------");
+            logger.LogInformation("------------ END ------------");
             
-            Console.WriteLine("\n Please enter a number that has been learnt");
-            int inputNumber = Convert.ToInt16(Console.ReadLine());
-            Inference(inputNumber,false, layer1, cls);
-            
+            for (;;)
+            {
+                Inference(false, layer1, cls, logger);
+            }
+
         }
 
-        private static List<double> InputSequence( List<double> inputValues)
+        private static void Inference(bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls, ILogger logger)
         {
-            Console.WriteLine("HTM Classifier is ready");
-            Console.WriteLine("Please enter a sequence to be learnt");
-            string userValue = Console.ReadLine();
-            var numbers = userValue.Split(',');
-            double sequence;
-            foreach (var number in numbers)
-            {
-                if (double.TryParse(number, out sequence))
+            
+                logger.LogInformation("\n Please enter a number that has been learnt or enter \"exit\" to exit");
+                var input = (Console.ReadLine());
+                if (input != "exit")
                 {
-                    inputValues.Add(sequence);
+                    int inputNumber = Convert.ToInt16(input);
+                    var result = layer1.Compute(inputNumber, false) as ComputeCycle;
+                    var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 3);
+                    logger.LogInformation("\n The predictions are:"); 
+                    foreach (var ans in predresult)
+                    { 
+                        logger.LogInformation($"Predicted Input: {string.Join(", ", ans.PredictedInput)}," + 
+                                          $"\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, " +
+                                          $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
+                    }
+                
                 }
-            }
-
-            return inputValues;
-        }
-
-        private static void Inference(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
-        {
-            var result = layer1.Compute(input, false) as ComputeCycle;
-            var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 3);
-            Console.WriteLine("\n The predictions are:");
-            foreach (var ans in predresult)
-            {
-                Console.WriteLine($"Predicted Input: {string.Join(", ", ans.PredictedInput)}," +
-                                  $"\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, " +
-                                  $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
-            }
+                else
+                {
+                    logger.LogInformation("You chose to exit.   Goodbye!");
+                    Environment.Exit(0); 
+                }
         }
 
         private static string GetKey(List<string> prevInputs, double input)

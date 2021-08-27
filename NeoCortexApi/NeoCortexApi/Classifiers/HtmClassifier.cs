@@ -12,6 +12,7 @@ using NeoCortexApi.Entities;
 using NeoCortexApi.Utility;
 
 
+
 namespace NeoCortexApi.Classifiers
 {
     /// <summary>
@@ -78,7 +79,7 @@ namespace NeoCortexApi.Classifiers
                 if (!m_ActiveMap2[input].SequenceEqual(cellIndicies))
                 {
                     var numOfSameBitsPct = m_ActiveMap2[input].Intersect(cellIndicies).Count();
-                    Debug.WriteLine(
+                    Console.WriteLine(
                         $"Prev/Now/Same={m_ActiveMap2[input].Length}/{cellIndicies.Length}/{numOfSameBitsPct}");
                 }
 
@@ -115,6 +116,7 @@ namespace NeoCortexApi.Classifiers
 
         public List<ClassifierResult> GetPredictedInputValues(Cell[] predictiveCells, short howMany)
         {
+            
             List<ClassifierResult> res = new List<ClassifierResult>();
             double maxSameBits = 0;
             TIN predictedValue = default;
@@ -123,14 +125,14 @@ namespace NeoCortexApi.Classifiers
             if (predictiveCells.Length != 0)
             {
                 int indxOfMatchingInp = 0;
-                Debug.WriteLine($"Item length: {predictiveCells.Length}\t Items: {m_ActiveMap2.Keys.Count}");
+                Console.WriteLine($"Item length: {predictiveCells.Length}\t Items: {m_ActiveMap2.Keys.Count}");
                 int n = 0;
 
                 List<int> sortedMatches = new List<int>();
 
                 var celIndicies = GetCellIndicies(predictiveCells);
 
-                Debug.WriteLine($"Predictive cells: {celIndicies.Length} \t {Helpers.StringifyVector(celIndicies)}");
+                Console.WriteLine($"Predictive cells: {celIndicies.Length} \t {Helpers.StringifyVector(celIndicies)}");
 
                 foreach (var pair in m_ActiveMap2)
                 {
@@ -167,7 +169,22 @@ namespace NeoCortexApi.Classifiers
             return res;
         }
 
-
+        public List<double> InputSequence( List<double> inputValues)
+        {
+            Console.WriteLine("HTM Classifier is ready");
+            Console.WriteLine("Please enter a sequence to be learnt");
+            string userValue = Console.ReadLine();
+            var numbers = userValue.Split(',');
+            double sequence;
+            foreach (var number in numbers)
+            {
+                if (double.TryParse(number, out sequence))
+                {
+                    inputValues.Add(sequence);
+                }
+            }
+            return inputValues;
+        }
 
         /// <summary>
         /// Gets predicted value for next cycle
@@ -183,20 +200,20 @@ namespace NeoCortexApi.Classifiers
             if (predictiveCells.Length != 0)
             {
                 int indxOfMatchingInp = 0;
-                Debug.WriteLine($"Item length: {predictiveCells.Length}\t Items: {m_ActiveMap2.Keys.Count}");
+                Console.WriteLine($"Item length: {predictiveCells.Length}\t Items: {m_ActiveMap2.Keys.Count}");
                 int n = 0;
 
                 List<int> sortedMatches = new List<int>();
 
                 var celIndicies = GetCellIndicies(predictiveCells);
 
-                Debug.WriteLine($"Predictive cells: {celIndicies.Length} \t {Helpers.StringifyVector(celIndicies)}");
+                Console.WriteLine($"Predictive cells: {celIndicies.Length} \t {Helpers.StringifyVector(celIndicies)}");
 
                 foreach (var pair in m_ActiveMap2)
                 {
                     if (pair.Value.SequenceEqual(celIndicies))
                     {
-                        Debug.WriteLine(
+                        Console.WriteLine(
                             $">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length}\tsimilarity 100pct\t {Helpers.StringifyVector(pair.Value)}");
                         return pair.Key;
                     }
@@ -204,14 +221,14 @@ namespace NeoCortexApi.Classifiers
                     var numOfSameBitsPct = pair.Value.Intersect(celIndicies).Count();
                     if (numOfSameBitsPct > maxSameBits)
                     {
-                        Debug.WriteLine(
+                        Console.WriteLine(
                             $">indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} = similarity {numOfSameBitsPct}\t {Helpers.StringifyVector(pair.Value)}");
                         maxSameBits = numOfSameBitsPct;
                         predictedValue = pair.Key;
                         indxOfMatchingInp = n;
                     }
                     else
-                        Debug.WriteLine(
+                        Console.WriteLine(
                             $"<indx:{n}\tinp/len: {pair.Key}/{pair.Value.Length} = similarity {numOfSameBitsPct}\t {Helpers.StringifyVector(pair.Value)}");
 
                     n++;
@@ -236,9 +253,9 @@ namespace NeoCortexApi.Classifiers
 
             foreach (var item in m_ActiveMap2)
             {
-                Debug.WriteLine("");
-                Debug.WriteLine($"{item.Key}");
-                Debug.WriteLine($"{Helpers.StringifyVector(item.Value)}");
+                Console.WriteLine("");
+                Console.WriteLine($"{item.Key}");
+                Console.WriteLine($"{Helpers.StringifyVector(item.Value)}");
 
                 sw.WriteLine("");
                 sw.WriteLine($"{item.Key}");
@@ -251,21 +268,21 @@ namespace NeoCortexApi.Classifiers
                 sw.Close();
             }
 
-            Debug.WriteLine("........... Cell State .............");
+            Console.WriteLine("........... Cell State .............");
 
             using (var cellStateSw = new StreamWriter(fileName.Replace(".csv", "HtmClassifier.fullstate.csv")))
             {
                 foreach (var item in m_AllInputs)
                 {
-                    Debug.WriteLine("");
-                    Debug.WriteLine($"{item.Key}");
+                    Console.WriteLine("");
+                    Console.WriteLine($"{item.Key}");
 
                     cellStateSw.WriteLine("");
                     cellStateSw.WriteLine($"{item.Key}");
                     foreach (var cellState in item.Value)
                     {
                         var str = Helpers.StringifyVector(cellState);
-                        Debug.WriteLine(str);
+                        Console.WriteLine(str);
                         cellStateSw.WriteLine(str);
                     }
                 }
