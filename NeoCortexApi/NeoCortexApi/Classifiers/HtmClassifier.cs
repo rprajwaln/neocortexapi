@@ -11,8 +11,6 @@ using System.Text;
 using NeoCortexApi.Entities;
 using NeoCortexApi.Utility;
 
-
-
 namespace NeoCortexApi.Classifiers
 {
     /// <summary>

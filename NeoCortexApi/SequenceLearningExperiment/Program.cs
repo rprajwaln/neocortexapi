@@ -114,7 +114,6 @@ namespace SequenceLearningExperiment
 
             // Calling Method to input values
             inputValues = cls.InputSequence(inputValues);
-            
             RunExperiment(inputBits, cfg, encoder, inputValues, cls, logger);
         }
 
