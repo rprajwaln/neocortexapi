@@ -339,7 +339,7 @@ namespace SequenceLearningExperiment
                 }
                 else
                 {
-                    logger.LogInformation("You chose to exit.   Goodbye!");
+                    logger.LogInformation("You chose to exit. Goodbye!");
                     Environment.Exit(0); 
                 }
         }
