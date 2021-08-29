@@ -105,6 +105,10 @@ After the user enters the number that has been learnt before by the classifier, 
      Predicted Input: 4-3-2-4-5-6-1-2-3,	Similarity Percentage: 50, 	Number of Same Bits: 40
 ~~~
 
+The user can see the learning trace and also can give a value to see the predicted values as explained above. The user can also choose to exit the program by typing ‘exit’.
+
+![image](https://user-images.githubusercontent.com/56980973/131250034-4cd00b7f-364a-42c9-a8ff-ba81d2514276.png)
+
 
 
 
