@@ -103,7 +103,7 @@ Once the classifier has learnt the sequence the Prediction code. The following e
                                           $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
                     }
                 
-                }
+         }
                 else
                 {
                     logger.LogInformation("You chose to exit. Goodbye!");
@@ -112,13 +112,14 @@ Once the classifier has learnt the sequence the Prediction code. The following e
         }
 ~~~ 
 
+After the user enters the number that has been learnt before by the classifier, the possible predicted outputs will be shown.
 
-Now the implemented HTM classifier method returns all possibilities as shown in the following trace:
 ~~~
 Please enter a number that has been learnt
     2
 ~~~
-After the user enters the number that has been learnt before by the classifier, the possible predicted outputs will be shown.
+
+Now the implemented HTM classifier method returns all possibilities as shown in the following trace:
  ~~~
      Active segments: 80, Matching segments: 120
      Item length: 80	 Items: 9
@@ -129,6 +130,9 @@ After the user enters the number that has been learnt before by the classifier, 
 
 The user can see the learning trace and also can give a value to see the predicted values as explained above. The user can also choose to exit the program by typing ‘exit’ as shown below.
 ~~~
+    Please enter a number that has been learnt or enter "exit" to exit
+    
+    exit
 
     You chose to exit. Goodbye!
 ~~~
