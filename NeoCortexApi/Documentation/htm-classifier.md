@@ -17,6 +17,34 @@ Assume, the following sequence is learned:
 ~~~
 1-2-3-4-5-3-5
 ~~~
+The following example illustrates this. The method *InputSequence* in SequenceLearning requires the user to input a sequence elements for HTM Classifier to learn.
+~~~csharp
+      private static List<double> InputSequence( List<double> inputValues)
+       {
+            Console.WriteLine("HTM Classifier is ready");
+            Console.WriteLine("Please enter a sequence to be learnt");
+            string userValue = Console.ReadLine();
+            var numbers = userValue.Split(',');
+            double sequence;
+            foreach (var number in numbers)
+            {
+                if (double.TryParse(number, out sequence))
+                {
+                    inputValues.Add(sequence);
+                }
+         }
+
+            return inputValues;
+        }
+~~~ 
+
+~~~
+Please enter a sequence to be learnt
+1.0,2.0,3.0,4.0,5.0,3.0,5.0
+~~~
+
+
+
 In every cycle, the experiment might create the key that represents the sequence in that cycle. For example, the key might look like:
 
 Cycle 1: '1-2-3-4-5-3-5' , 
@@ -55,48 +83,43 @@ Predicted Input: 6-2-3-2-5-2-6-2-6-2-5-2-3-2-3-2-5-2,	Similarity Percentage: 100
 Predicted Input: 6-2-6-2-5-2-3-2-3-2-5-2-6-2-3-2-5-2,	Similarity Percentage: 100, 	Number of Same Bits: 40\
 Predicted Input: 3-2-3-2-5-2-6-2-3-2-5-2-6-2-6-2-5-2,	Similarity Percentage: 100, 	Number of Same Bits: 40\
 ~~~
-Once the classifier has learnt the sequence (code omitted), you can write the inferring (prediction) code. The following example illustrates this. The method *InputSequence* requires the user to input a few sequence elements.
+Once the classifier has learnt the sequence the Prediction code. The following example illustrates this. The user can enter a input which is there in learnt sequence and predictions after that would be shown.
 ~~~csharp
-      private static List<double> InputSequence( List<double> inputValues)
-       {
-            Console.WriteLine("HTM Classifier is ready");
-            Console.WriteLine("Please enter a sequence to be learnt");
-            string userValue = Console.ReadLine();
-            var numbers = userValue.Split(',');
-            double sequence;
-            foreach (var number in numbers)
-            {
-                if (double.TryParse(number, out sequence))
-                {
-                    inputValues.Add(sequence);
-                }
-         }
-
-            return inputValues;
-        }
-~~~     
-The following method is implementing prediction.
-~~~csharp
-       private static void Predict(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
+        private static void Inference(bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls, ILogger logger)
         {
-            var result = layer1.Compute(input, false) as ComputeCycle;
-            var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 3);
-            Console.WriteLine("\n The predictions are:");
-            foreach (var ans in predresult)
-            {
-                Console.WriteLine($"Predicted Input: {string.Join(", ", ans.PredictedInput)}," +
-                                  $"\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, " +
-                                  $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
-            }
+            
+                logger.LogInformation("\n Please enter a number that has been learnt or enter \"exit\" to exit");
+                var input = (Console.ReadLine());
+                if (input != "exit")
+                {
+                    int inputNumber = Convert.ToInt16(input);
+                    var result = layer1.Compute(inputNumber, false) as ComputeCycle;
+                    var predresult = cls.GetPredictedInputValues(result.PredictiveCells.ToArray(), 3);
+                    logger.LogInformation("\n The predictions are:"); 
+                    foreach (var ans in predresult)
+                    { 
+                        logger.LogInformation($"Predicted Input: {string.Join(", ", ans.PredictedInput)}," + 
+                                          $"\tSimilarity Percentage: {string.Join(", ", ans.Similarity)}, " +
+                                          $"\tNumber of Same Bits: {string.Join(", ", ans.NumOfSameBits)}");
+                    }
+                
+         }
+                else
+                {
+                    logger.LogInformation("You chose to exit. Goodbye!");
+                    Environment.Exit(0); 
+                }
         }
-~~~
+~~~ 
 
-Now the implemented HTM classifier method returns all possibilities as shown in the following trace:
+After the user enters the number that has been learnt before by the classifier, the possible predicted outputs will be shown.
+
 ~~~
 Please enter a number that has been learnt
     2
 ~~~
-After the user enters the number that has been learnt before by the classifier, the possible predicted outputs will be shown.
+
+Now the implemented HTM classifier method returns all possibilities as shown in the following trace:
  ~~~
      Active segments: 80, Matching segments: 120
      Item length: 80	 Items: 9
@@ -105,7 +128,11 @@ After the user enters the number that has been learnt before by the classifier, 
      Predicted Input: 4-3-2-4-5-6-1-2-3,	Similarity Percentage: 50, 	Number of Same Bits: 40
 ~~~
 
+The user can see the learning trace and also can give a value to see the predicted values as explained above. The user can also choose to exit the program by typing ‘exit’ as shown below.
+~~~
+    Please enter a number that has been learnt or enter "exit" to exit
+    
+    exit
 
-
-
-
+    You chose to exit. Goodbye!
+~~~
