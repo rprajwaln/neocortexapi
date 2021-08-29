@@ -166,23 +166,7 @@ namespace NeoCortexApi.Classifiers
 
             return res;
         }
-
-        public List<double> InputSequence( List<double> inputValues)
-        {
-            Console.WriteLine("HTM Classifier is ready");
-            Console.WriteLine("Please enter a sequence to be learnt");
-            string userValue = Console.ReadLine();
-            var numbers = userValue.Split(',');
-            double sequence;
-            foreach (var number in numbers)
-            {
-                if (double.TryParse(number, out sequence))
-                {
-                    inputValues.Add(sequence);
-                }
-            }
-            return inputValues;
-        }
+        
 
         /// <summary>
         /// Gets predicted value for next cycle

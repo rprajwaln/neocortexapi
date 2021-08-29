@@ -113,7 +113,7 @@ namespace SequenceLearningExperiment
             // var inputValues = new List<double>(new double[] { 2.0, 3.0, 2.0, 5.0, 2.0, 6.0, 2.0, 6.0, 2.0, 5.0, 2.0, 3.0, 2.0, 3.0, 2.0, 5.0, 2.0, 6.0 });
 
             // Calling Method to input values
-            inputValues = cls.InputSequence(inputValues);
+            inputValues = InputSequence(inputValues, logger);
             RunExperiment(inputBits, cfg, encoder, inputValues, cls, logger);
         }
 
@@ -316,6 +316,23 @@ namespace SequenceLearningExperiment
                 Inference(false, layer1, cls, logger);
             }
 
+        }
+        
+        public static List<double> InputSequence( List<double> inputValues, ILogger logger)
+        {
+            logger.LogInformation("HTM Classifier is ready");
+            logger.LogInformation("Please enter a sequence to be learnt");
+            string userValue = Console.ReadLine();
+            var numbers = userValue.Split(',');
+            double sequence;
+            foreach (var number in numbers)
+            {
+                if (double.TryParse(number, out sequence))
+                {
+                    inputValues.Add(sequence);
+                }
+            }
+            return inputValues;
         }
 
         private static void Inference(bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls, ILogger logger)
