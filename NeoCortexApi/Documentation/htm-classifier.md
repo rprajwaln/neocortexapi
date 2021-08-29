@@ -74,7 +74,13 @@ Once the classifier has learnt the sequence (code omitted), you can write the in
 
             return inputValues;
         }
-~~~     
+~~~ 
+
+~~~
+Please enter a sequence to be learnt
+1.0,3.0,4.0,1.0,2.0
+~~~
+
 The following method is implementing prediction.
 ~~~csharp
        private static void Predict(int input, bool learn, CortexLayer<object, object> layer1, HtmClassifier<string, ComputeCycle> cls)
@@ -107,7 +113,6 @@ After the user enters the number that has been learnt before by the classifier, 
 
 The user can see the learning trace and also can give a value to see the predicted values as explained above. The user can also choose to exit the program by typing ‘exit’.
 
-![image](https://user-images.githubusercontent.com/56980973/131250034-4cd00b7f-364a-42c9-a8ff-ba81d2514276.png)
 
 
 
