@@ -99,7 +99,7 @@ namespace SequenceLearningExperiment
             
             // Music Notes C-0, D-1, E-2, F-3, G-4, H-5
             // http://sea-01.cit.frankfurt-university.de:32224/?dmVyPTEuMDAxJiYwYzg1N2MyNmFmMzIyMjc0OD02MDlGQkRBOF83Njg0Nl8xNTU0N18xJiZmYjFlMzlhNWZmYWYyNDE9MTIzMyYmdXJsPWh0dHBzJTNBJTJGJTJGd3d3JTJFYmV0aHNub3Rlc3BsdXMlMkVjb20lMkYyMDEzJTJGMDglMkZ0d2lua2xlLXR3aW5rbGUtbGl0dGxlLXN0YXIlMkVodG1sJTBE
-            // 1Stable and reached 100% accuracy with 1024 cycles.
+            // Stable and reached 100% accuracy with 1024 cycles.
             // var inputValues = new List<double>( new double[] { 0.0, 0.0, 4.0, 4.0, 5.0, 5.0, 4.0, 3.0, 3.0, 2.0, 2.0, 1.0, 1.0, 0.0 });
 
             // Stable and reached 100% accuracy with 531 cycles.
